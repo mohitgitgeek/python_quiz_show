@@ -5,129 +5,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Python Quiz Show</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      background: #f8fafc;
-      color: #0f172a;
-    }
-    main {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    }
-    h1 {
-      margin-top: 0;
-    }
-    .question {
-      margin: 1rem 0;
-      padding: 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      background: #f8fafc;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-    input {
-      width: 100%;
-      max-width: 100%;
-      padding: 0.55rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 0.7rem 1.1rem;
-      border: 0;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 2rem; background: #f8fafc; color: #0f172a; }
+    main { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 10px; padding: 1.5rem;
+           box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); }
+    h1 { margin-top: 0; }
+    .question { margin: 1rem 0; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
+    .question.correct { border-color: #16a34a; background: #f0fdf4; }
+    .question.wrong { border-color: #dc2626; background: #fef2f2; }
+    label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    input { width: 100%; padding: 0.55rem; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    button { margin-top: 1rem; padding: 0.7rem 1.1rem; border: 0; border-radius: 8px; background: #2563eb;
+             color: white; font-weight: 700; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    #result { margin-top: 1rem; font-size: 1.1rem; font-weight: 700; }
+    .name-field { margin-bottom: 1rem; }
+    .panel { margin-top: 1.5rem; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; }
+    .panel h2 { margin-top: 0; font-size: 1.1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e2e8f0; font-size: 0.92rem; }
+    .muted { color: #64748b; font-size: 0.85rem; }
+    .bar { height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin-top: 4px; }
+    .bar > div { height: 100%; background: #2563eb; }
   </style>
 </head>
 <body>
   <main>
-    <h1>Python Quiz Show</h1>
+    <h1>🐍 Python Quiz Show</h1>
     <p>Answer all seven questions, then click <strong>Submit</strong>.</p>
-    <form id="quiz-form">
-      <div class="question">
-        <label for="q1">1) Who founded Python?</label>
-        <input id="q1" name="q1" required>
-      </div>
-      <div class="question">
-        <label for="q2">2) Enter one Python Easter Egg command</label>
-        <input id="q2" name="q2" placeholder="Example: import this" required>
-      </div>
-      <div class="question">
-        <label for="q3">3) Name one keyword used in exception handling</label>
-        <input id="q3" name="q3" required>
-      </div>
-      <div class="question">
-        <label for="q4">4) Expand OOP</label>
-        <input id="q4" name="q4" required>
-      </div>
-      <div class="question">
-        <label for="q5">5) What is (24 / (8 * 1)) + 20 ?</label>
-        <input id="q5" name="q5" required>
-      </div>
-      <div class="question">
-        <label for="q6">6) What is the sorted value of [29,2,11,70]?</label>
-        <input id="q6" name="q6" placeholder="[2, 11, 29, 70]" required>
-      </div>
-      <div class="question">
-        <label for="q7">7) Which Python library is used for simple graphics and design?</label>
-        <input id="q7" name="q7" required>
-      </div>
-      <button type="submit">Submit</button>
-    </form>
+    <p class="muted" id="mode-note"></p>
+
+    <div class="name-field">
+      <label for="player-name">Your name (for the leaderboard)</label>
+      <input id="player-name" placeholder="Anonymous">
+    </div>
+
+    <form id="quiz-form"></form>
     <p id="result" aria-live="polite"></p>
+
+    <div class="panel" id="ml-panel" style="display:none">
+      <h2>🤖 ML prediction</h2>
+      <p id="ml-text"></p>
+      <div class="bar"><div id="ml-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="panel">
+      <h2>🏆 Leaderboard</h2>
+      <table><thead><tr><th>#</th><th>Name</th><th>Score</th><th>When</th></tr></thead>
+        <tbody id="leaderboard"><tr><td colspan="4" class="muted">No scores yet.</td></tr></tbody>
+      </table>
+    </div>
   </main>
 
   <script>
-    const answers = {
-      q1: ["guido van rossum", "guido von rossum"],
-      q2: ["import this", "this.c", "this.s", "this.i", "this.d"],
-      q3: ["try", "except", "finally"],
-      q4: ["object oriented programming"],
-      q5: ["23", "23.0"],
-      q6: ["[2,11,29,70]", "[2, 11, 29, 70]"],
-      q7: ["turtle"]
-    };
+    // Set this to your backend URL when hosting the frontend separately (e.g. GitHub Pages).
+    const API_BASE = window.API_BASE || '';
 
-    function normalize(value) {
-      return value.trim().toLowerCase();
+    // Fallback questions + answers (used only if the backend API is unreachable, e.g. on GitHub Pages).
+    const FALLBACK = [
+      { id: "q1", text: "Who founded Python?", answers: ["guido van rossum", "guido von rossum"] },
+      { id: "q2", text: "Enter one Python Easter Egg command", answers: ["import this","this.c","this.s","this.i","this.d"] },
+      { id: "q3", text: "Name one keyword used in exception handling", answers: ["try","except","finally"] },
+      { id: "q4", text: "Expand OOP", answers: ["object oriented programming","object-oriented programming"] },
+      { id: "q5", text: "What is (24 / (8 * 1)) + 20 ?", answers: ["23","23.0"] },
+      { id: "q6", text: "What is the sorted value of [29, 2, 11, 70]?", answers: ["[2,11,29,70]","[2, 11, 29, 70]"] },
+      { id: "q7", text: "Which Python library is used for simple graphics and design?", answers: ["turtle"] },
+    ];
+
+    let questions = [];
+    let online = false;
+
+    const norm = (v) => String(v || '').trim().toLowerCase().replace(/\s/g, '');
+
+    async function init() {
+      try {
+        const r = await fetch(API_BASE + '/api/questions');
+        if (!r.ok) throw new Error('no api');
+        questions = await r.json();
+        online = true;
+        document.getElementById('mode-note').textContent = 'Connected to backend — scores are saved to the leaderboard.';
+      } catch (e) {
+        questions = FALLBACK.map(q => ({ id: q.id, text: q.text }));
+        online = false;
+        document.getElementById('mode-note').textContent = 'Offline mode — graded in your browser (no backend detected).';
+      }
+      renderQuestions();
+      if (online) loadLeaderboard();
     }
 
-    document.getElementById("quiz-form").addEventListener("submit", function (event) {
+    function renderQuestions() {
+      const form = document.getElementById('quiz-form');
+      form.innerHTML = questions.map((q, i) =>
+        `<div class="question" id="qbox-${q.id}">
+           <label for="${q.id}">${i + 1}) ${q.text}</label>
+           <input id="${q.id}" name="${q.id}" autocomplete="off" required>
+         </div>`).join('') + '<button type="submit">Submit</button>';
+      form.addEventListener('submit', onSubmit);
+    }
+
+    async function onSubmit(event) {
       event.preventDefault();
-      const formData = new FormData(event.target);
-      let score = 0;
+      const answers = {};
+      questions.forEach(q => { answers[q.id] = document.getElementById(q.id).value; });
+      const name = document.getElementById('player-name').value.trim() || 'Anonymous';
 
-      for (const [question, accepted] of Object.entries(answers)) {
-        const input = normalize(formData.get(question) || "");
-        if (accepted.includes(input)) {
-          score += 1;
-        }
+      if (online) {
+        try {
+          const r = await fetch(API_BASE + '/api/submit', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, answers })
+          });
+          const data = await r.json();
+          showResult(data.score, data.total, data.results, data.rank, data.pass_probability);
+          loadLeaderboard();
+          return;
+        } catch (e) { online = false; }
       }
+      // Offline grading fallback
+      let score = 0; const results = {};
+      FALLBACK.forEach(q => {
+        const ok = q.answers.map(norm).includes(norm(answers[q.id]));
+        results[q.id] = ok; if (ok) score++;
+      });
+      showResult(score, FALLBACK.length, results, null, null);
+    }
 
-      const result = document.getElementById("result");
-      result.textContent = `Your score: ${score}/7`;
-    });
+    function showResult(score, total, results, rank, passProb) {
+      questions.forEach(q => {
+        const box = document.getElementById('qbox-' + q.id);
+        box.classList.remove('correct', 'wrong');
+        if (results && q.id in results) box.classList.add(results[q.id] ? 'correct' : 'wrong');
+      });
+      let txt = `Your score: ${score}/${total}`;
+      if (rank) txt += ` — leaderboard rank #${rank}`;
+      document.getElementById('result').textContent = txt;
+
+      const panel = document.getElementById('ml-panel');
+      if (passProb !== null && passProb !== undefined) {
+        panel.style.display = '';
+        document.getElementById('ml-text').textContent =
+          `Based on your first three answers, the model estimates a ${passProb}% chance of passing (≥5/7).`;
+        document.getElementById('ml-bar').style.width = passProb + '%';
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const r = await fetch(API_BASE + '/api/leaderboard');
+        const rows = await r.json();
+        const tb = document.getElementById('leaderboard');
+        tb.innerHTML = rows.length
+          ? rows.map((row, i) => `<tr><td>${i + 1}</td><td>${escapeHtml(row.name)}</td><td>${row.score}/${row.total}</td><td class="muted">${row.date}</td></tr>`).join('')
+          : '<tr><td colspan="4" class="muted">No scores yet.</td></tr>';
+      } catch (e) {}
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    init();
   </script>
 </body>
 </html>
