@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Quiz Show</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    h1 {
+      margin-top: 0;
+    }
+    .question {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.55rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.1rem;
+      border: 0;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Python Quiz Show</h1>
+    <p>Answer all seven questions, then click <strong>Submit</strong>.</p>
+    <form id="quiz-form">
+      <div class="question">
+        <label for="q1">1) Who founded Python?</label>
+        <input id="q1" name="q1" required>
+      </div>
+      <div class="question">
+        <label for="q2">2) Enter one Python Easter Egg command</label>
+        <input id="q2" name="q2" placeholder="Example: import this" required>
+      </div>
+      <div class="question">
+        <label for="q3">3) Name one keyword used in exception handling</label>
+        <input id="q3" name="q3" required>
+      </div>
+      <div class="question">
+        <label for="q4">4) Expand OOP</label>
+        <input id="q4" name="q4" required>
+      </div>
+      <div class="question">
+        <label for="q5">5) What is (24 / (8 * 1)) + 20 ?</label>
+        <input id="q5" name="q5" required>
+      </div>
+      <div class="question">
+        <label for="q6">6) What is the sorted value of [29,2,11,70]?</label>
+        <input id="q6" name="q6" placeholder="[2, 11, 29, 70]" required>
+      </div>
+      <div class="question">
+        <label for="q7">7) Which Python library is used for simple graphics and design?</label>
+        <input id="q7" name="q7" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <p id="result" aria-live="polite"></p>
+  </main>
+
+  <script>
+    const answers = {
+      q1: ["guido van rossum", "guido von rossum"],
+      q2: ["import this", "this.c", "this.s", "this.i", "this.d"],
+      q3: ["try", "except", "finally"],
+      q4: ["object oriented programming"],
+      q5: ["23", "23.0"],
+      q6: ["[2,11,29,70]", "[2, 11, 29, 70]"],
+      q7: ["turtle"]
+    };
+
+    function normalize(value) {
+      return value.trim().toLowerCase();
+    }
+
+    document.getElementById("quiz-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      let score = 0;
+
+      for (const [question, accepted] of Object.entries(answers)) {
+        const input = normalize(formData.get(question) || "");
+        if (accepted.includes(input)) {
+          score += 1;
+        }
+      }
+
+      const result = document.getElementById("result");
+      result.textContent = `Your score: ${score}/7`;
+    });
+  </script>
+</body>
+</html>
